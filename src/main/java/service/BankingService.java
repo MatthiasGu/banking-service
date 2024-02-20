@@ -68,13 +68,11 @@ public class BankingService {
         }
     }
 
-    public double getAccountBalance(String accountId) {
+    public double getAccountBalance(String accountId) throws AccountNotFoundException{
         Account account = accounts.get(accountId);
         if (account != null) {
             return account.getBalance();
-        } else {
-            System.out.println("Account not found!");
-            return -1; // Return a negative value to indicate account not found
         }
+        throw new AccountNotFoundException(accountId);
     }
 }

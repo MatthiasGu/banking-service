@@ -32,21 +32,21 @@ public class BankingServiceTest {
     }
 
     @Test
-    public void testDeposit() throws AccountAlreadyExistsException {
+    public void testDeposit() throws AccountAlreadyExistsException, AccountNotFoundException {
         bankingService.createAccount("123456", 1000);
         bankingService.deposit("123456", 200);
         assertEquals(1200, bankingService.getAccountBalance("123456"));
     }
 
     @Test
-    public void testWithdraw_sufficientBalance() throws AccountAlreadyExistsException {
+    public void testWithdraw_sufficientBalance() throws AccountAlreadyExistsException, AccountNotFoundException {
         bankingService.createAccount("123456", 1000);
         bankingService.withdraw("123456", 500);
         assertEquals(500, bankingService.getAccountBalance("123456"));
     }
 
     @Test
-    public void testWithdraw_insufficientBalance() throws AccountAlreadyExistsException {
+    public void testWithdraw_insufficientBalance() throws AccountAlreadyExistsException, AccountNotFoundException {
         bankingService.createAccount("123456", 100);
         assertDoesNotThrow(() -> bankingService.withdraw("123456", 200));
         assertEquals(100, bankingService.getAccountBalance("123456"));
@@ -62,7 +62,7 @@ public class BankingServiceTest {
     }
 
     @Test
-    public void testTransfer_throwsExceptionWhenFromAccountNotFound() throws AccountAlreadyExistsException {
+    public void testTransfer_throwsExceptionWhenFromAccountNotFound() throws AccountAlreadyExistsException, AccountNotFoundException {
         bankingService.createAccount("123456", 1000);
         bankingService.createAccount("789012", 500);
         assertThrows(
@@ -74,7 +74,7 @@ public class BankingServiceTest {
     }
 
     @Test
-    public void testTransfer_throwsExceptionWhenToAccountNotFound() throws AccountAlreadyExistsException {
+    public void testTransfer_throwsExceptionWhenToAccountNotFound() throws AccountAlreadyExistsException, AccountNotFoundException {
         bankingService.createAccount("123456", 1000);
         bankingService.createAccount("789012", 500);
         assertThrows(
@@ -95,8 +95,14 @@ public class BankingServiceTest {
     }
 
     @Test
-    public void testGetAccountBalance() throws AccountAlreadyExistsException {
+    public void testGetAccountBalance() throws AccountAlreadyExistsException, AccountNotFoundException {
         bankingService.createAccount("123456", 1000);
         assertEquals(1000, bankingService.getAccountBalance("123456"));
+    }
+
+    @Test
+    public void testGetAccountBalance_throwsException() throws AccountAlreadyExistsException {
+        bankingService.createAccount("12345", 1000);
+        assertThrows(AccountNotFoundException.class, () -> bankingService.getAccountBalance("123456"));
     }
 }
